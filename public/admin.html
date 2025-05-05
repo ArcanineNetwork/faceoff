@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Faceoff Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div class="container admin-container">
+        <header>
+            <h1>Quiz Faceoff Admin Panel</h1>
+            <div id="status-indicator">
+                <span id="connection-status">Connecting...</span>
+            </div>
+        </header>
+
+        <div id="admin-login" class="section">
+            <h2>Admin Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="admin-password">Password:</label>
+                    <input type="password" id="admin-password" required>
+                </div>
+                <button type="submit" class="btn primary-btn">Login</button>
+            </form>
+        </div>
+
+        <div id="admin-panel" class="hidden">
+            <div class="admin-grid">
+                <!-- Left Column: Users & Queue Management -->
+                <div class="admin-column">
+                    <div class="admin-section">
+                        <h2>Connected Users</h2>
+                        <div id="users-list" class="list-container">
+                            <div class="list-empty-message">No users connected</div>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-section">
+                        <h2>User Queue</h2>
+                        <div id="queue-list" class="list-container">
+                            <div class="list-empty-message">Queue is empty</div>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <h2>Previous Winners</h2>
+                        <div id="winners-list" class="list-container">
+                            <div class="list-empty-message">No winners yet</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Center Column: Game Management -->
+                <div class="admin-column">
+                    <div class="admin-section" id="game-controls">
+                        <h2>Current Game</h2>
+                        <div id="round-indicator">Round: <span id="round-number">0</span></div>
+                        
+                        <div id="player-selection">
+                            <h3>Select Players</h3>
+                            <div id="player-slots">
+                                <div class="player-slot" id="player-slot-1">
+                                    <span class="slot-label">Player 1:</span>
+                                    <div class="slot-content">Select a player</div>
+                                    <div class="player-light"></div>
+                                </div>
+                                <div class="player-slot" id="player-slot-2">
+                                    <span class="slot-label">Player 2:</span>
+                                    <div class="slot-content">Select a player</div>
+                                    <div class="player-light"></div>
+                                </div>
+                            </div>
+                            <button id="start-game-btn" class="btn action-btn" disabled>Start Faceoff</button>
+                        </div>
+                        
+                        <div id="current-question-display">
+                            <h3>Current Question</h3>
+                            <div id="question-text">No question selected</div>
+                        </div>
+                        
+                        <div id="game-actions">
+                            <button id="select-winner-btn" class="btn primary-btn" disabled>Select Winner</button>
+                        </div>
+                        
+                        <div id="replace-player">
+                            <h3>Replace Player</h3>
+                            <div class="form-group">
+                                <label for="player-to-replace">Replace:</label>
+                                <select id="player-to-replace" disabled>
+                                    <option value="">Select player</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="new-player">With:</label>
+                                <select id="new-player" disabled>
+                                    <option value="">Select from queue</option>
+                                </select>
+                            </div>
+                            <button id="replace-btn" class="btn secondary-btn" disabled>Replace Player</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Questions Management -->
+                <div class="admin-column">
+                    <div class="admin-section">
+                        <h2>Questions Queue</h2>
+                        <div id="add-question">
+                            <h3>Add New Question</h3>
+                            <div class="form-group">
+                                <label for="question-input">Question:</label>
+                                <textarea id="question-input" rows="3" placeholder="Enter a new question"></textarea>
+                            </div>
+                            <button id="add-question-btn" class="btn secondary-btn">Add Question</button>
+                        </div>
+                        
+                        <div id="questions-list" class="list-container">
+                            <div class="list-empty-message">No questions added</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/admin.js"></script>
+</body>
+</html>

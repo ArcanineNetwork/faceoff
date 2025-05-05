@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Faceoff</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz Faceoff</h1>
+            <div id="status-indicator">
+                <span id="connection-status">Connecting...</span>
+            </div>
+        </header>
+
+        <div id="registration-form" class="section">
+            <h2>Join the Game</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="username">Your Name:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <button type="submit" class="btn primary-btn">Join Queue</button>
+            </form>
+        </div>
+
+        <div id="waiting-area" class="section hidden">
+            <h2>Waiting Area</h2>
+            <p>You are in the queue. Waiting for the admin to select you for a faceoff.</p>
+            <div class="status-message">
+                <span id="queue-position"></span>
+            </div>
+        </div>
+
+        <div id="game-area" class="section hidden">
+            <div id="player-status" class="status-message">
+                <span id="player-role"></span>
+            </div>
+
+            <div id="round-info">
+                <h2>Current Round: <span id="round-number">-</span></h2>
+            </div>
+
+            <div id="players-display">
+                <div class="player-card" id="player-one">
+                    <div class="player-name">Player 1</div>
+                    <div class="player-light"></div>
+                </div>
+                <div class="vs-indicator">VS</div>
+                <div class="player-card" id="player-two">
+                    <div class="player-name">Player 2</div>
+                    <div class="player-light"></div>
+                </div>
+            </div>
+
+            <div id="question-display">
+                <h3>Question:</h3>
+                <div id="question-text">Waiting for the question...</div>
+            </div>
+
+            <div id="controls-area">
+                <button id="buzz-button" class="btn action-btn">BUZZ IN!</button>
+                <div id="buzz-status" class="status-message hidden"></div>
+            </div>
+            
+            <div id="result-area" class="status-message hidden">
+                <span id="result-message"></span>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/main.js"></script>
+</body>
+</html>
