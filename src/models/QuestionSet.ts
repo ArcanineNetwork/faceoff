@@ -1,7 +1,7 @@
-import mongoose, { Schema } from 'mongoose';
-import { logger } from '../logger';
+import mongoose from 'mongoose';
 
 export interface Question {
+  _id: mongoose.Types.ObjectId;
   text: string;
   createdAt: Date;
   updatedAt: Date;

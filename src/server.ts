@@ -7,7 +7,7 @@ import { Server } from 'socket.io';
 import { connectDB, disconnectDB } from './config/mongodb';
 import { logger } from './logger';
 import { errorHandler } from './middleware/error'
-import { User, Question, Game } from './types';
+import { User, Game } from './types';
 import { handleWebSocket } from './websocket';
 import routes from './routes';
 
@@ -35,9 +35,7 @@ app.use('/', routes);
 // Error handling middleware
 app.use(errorHandler);
 
-// In-memory data storage (would use a database in production)
 const users = new Map<string, User>();
-const questions: Question[] = [];
 const userQueue: string[] = [];
 let currentGame: Game = {
   players: [],
@@ -54,7 +52,7 @@ io.on('connection', (socket) => {
   // Pass socket, data, and io server to the handler
   handleWebSocket(socket, {
     users,
-    questions,
+    questions: [],
     userQueue,
     currentGame
   }, io);
@@ -65,7 +63,7 @@ const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
-    await connectDB();
+    await connectDB({ db: process.env.MONGODB_DB! });
     httpServer.listen(PORT, () => {
       logger.info(`Server running on port ${PORT}`);
     });

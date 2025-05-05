@@ -1,5 +1,5 @@
 import { Socket, Server } from 'socket.io';
-import { User, Question, Game } from './types';
+import { SocketData } from './types';
 import { wsLogger } from './logger';
 import {
   handleGameState,
@@ -13,14 +13,6 @@ import {
   handleSelectWinner,
   handleGetState
 } from './websocket/events';
-
-// Type for the socket data structure
-interface SocketData {
-  users: Map<string, User>;
-  questions: Question[];
-  userQueue: string[];
-  currentGame: Game;
-}
 
 export const handleWebSocket = (socket: Socket, data: SocketData, io: Server) => {
   wsLogger.info('WebSocket connection established', { socketId: socket.id });

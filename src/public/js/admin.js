@@ -194,6 +194,7 @@ socket.on('usersUpdated', (data) => {
 
 // Question added
 socket.on('questionAdded', (question) => {
+    console.log('Question added:', question);
     adminState.questions.push(question);
     updateQuestionsUI();
 });
@@ -304,7 +305,7 @@ function resetGameActions() {
     defaultBtn.id = 'select-winner-btn';
     defaultBtn.className = 'btn primary-btn';
     defaultBtn.textContent = 'Select Winner';
-    defaultBtn.disabled = true; // Disable until someone buzzes
+    defaultBtn.disabled = true;
     
     // Add event listener
     defaultBtn.addEventListener('click', handleWinnerSelection);
@@ -384,6 +385,8 @@ socket.on('gameReset', (data) => {
     
     // Reset buzzed player tracking
     adminState.buzzedPlayerId = null;
+
+    startGameBtn.disabled = false;
     
     // Clear question
     questionText.textContent = 'No question selected';
@@ -610,13 +613,13 @@ function updateQuestionsUI() {
         const questionItem = document.createElement('div');
         questionItem.classList.add('list-item');
         questionItem.textContent = question.text;
-        questionItem.dataset.id = question.id;
+        questionItem.dataset.id = question._id;
         
         // Add click handler to select question
         questionItem.addEventListener('click', () => {
             // Only allow selecting question if players are selected
             if (adminState.selectedPlayers[0] && adminState.selectedPlayers[1]) {
-                selectQuestion(question.id, question.text);
+                selectQuestion(question._id, question.text);
             } else {
                 alert('Please select players first!');
             }
@@ -687,6 +690,7 @@ function selectPlayer(slot, id, name) {
 // Select question
 function selectQuestion(id, text) {
     adminState.selectedQuestion = id;
+    console.log('Selected question:', adminState.selectedQuestion);
     socket.emit('selectQuestion', id);
 }
 
@@ -822,12 +826,13 @@ document.getElementById('replace-btn').addEventListener('click', () => {
     }
 });
 
-addQuestionBtn.addEventListener('click', () => {
+addQuestionBtn.addEventListener('click', async () => {
     const text = questionInput.value.trim();
-    if (text) {
-        socket.emit('addQuestion', { text });
-        questionInput.value = '';
+    if(!text) {
+        return;
     }
+    socket.emit('addQuestion', { text });  
+    questionInput.value = '';
 });
 
 // Update player replacement controls when selections change

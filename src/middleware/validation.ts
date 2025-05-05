@@ -92,7 +92,7 @@ export const AddQuestionsSchema = z.object({
 });
 
 export const GetQuestionSetSchema = z.object({
-  id: z.string().uuid()
+  id: z.string()
 });
 
 // Types

@@ -33,7 +33,7 @@ export default class QuestionSetService implements QuestionSetServiceInterface {
   async getQuestionSet(id: string): Promise<QuestionSet | null> {
     try {
       const questionSet = await QuestionSet.findById(id);
-      logger.info('QuestionSet retrieved', { questionSetId: id });
+      logger.info('QuestionSet retrieved', { questionSetId: id, questionSet });
       return questionSet;
     } catch (error) {
       logger.error('Failed to get QuestionSet', { error, questionSetId: id });

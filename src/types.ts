@@ -8,7 +8,6 @@ export interface User {
 export interface Question {
   id: string;
   text: string;
-  createdAt: Date;
 }
 
 export interface Game {
@@ -47,4 +46,11 @@ export interface Buzzed {
 export interface ReplacePlayer {
   oldPlayerId: string;
   newPlayerId: string;
+}
+
+export interface SocketData {
+  users: Map<string, User>;
+  questions: Question[];
+  userQueue: string[];
+  currentGame: Game;
 }

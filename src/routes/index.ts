@@ -6,8 +6,11 @@ const router = express.Router();
 
 // Serve static files
 const publicDir = path.join(__dirname, '..', 'public');
-
 router.use(express.static(publicDir));
+
+router.get('/admin', (req, res) => {
+  res.sendFile(path.join(publicDir, 'admin.html'));
+});
 
 // API routes
 router.use('/api/questionSets', require('./api/questionSets').default);

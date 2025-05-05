@@ -1,15 +1,7 @@
 import { Socket, Server } from 'socket.io';
-import { v4 as uuidv4 } from 'uuid';
-import { User, Question, Game, ReplacePlayer } from '../types';
+import { User, ReplacePlayer, SocketData } from '../types';
 import { wsLogger, userLogger, gameLogger } from '../logger';
-
-// Type for the socket data structure
-interface SocketData {
-  users: Map<string, User>;
-  questions: Question[];
-  userQueue: string[];
-  currentGame: Game;
-}
+import QuestionSetService from '../services/questionSetService';
 
 // Game state handler
 export const handleGameState = (socket: Socket, data: SocketData, io: Server) => {
@@ -88,21 +80,19 @@ export const handleUserRegistration = (socket: Socket, data: SocketData, io: Ser
 
 // Add question handler
 export const handleAddQuestion = (socket: Socket, data: SocketData, io: Server) => {
-  socket.on('addQuestion', (question: { text: string }) => {
+  socket.on('addQuestion', async (question: { text: string }) => {
     const user = data.users.get(socket.id);
     if (user && user.isAdmin) {
-      const newQuestion: Question = {
-        id: uuidv4(),
-        text: question.text,
-        createdAt: new Date()
-      };
+      const questionSetService = new QuestionSetService();
+      const questionSet = await questionSetService.addQuestions('6818f618e44cc58cccc01c27', [{
+        text: question.text
+      }]);
+      const savedQuestion = questionSet.questions[questionSet.questions.length - 1];
 
-      data.questions.push(newQuestion);
-
-      io.to('admin-room').emit('questionAdded', newQuestion);
+      io.to('admin-room').emit('questionAdded', savedQuestion);
       gameLogger.info('Question added', {
-        questionId: newQuestion.id,
-        questionText: newQuestion.text
+        questionId: savedQuestion._id,
+        questionText: savedQuestion.text
       });
     }
   });
@@ -133,7 +123,7 @@ export const handleSelectPlayers = (socket: Socket, data: SocketData, io: Server
       }));
 
       // Notify all clients about new players
-      socket.emit('playersSelected', {
+      io.emit('playersSelected', {
         players: data.currentGame.players.map(id => ({
           id,
           name: data.users.get(id)?.name || 'Unknown'
@@ -188,12 +178,17 @@ export const handleSelectPlayers = (socket: Socket, data: SocketData, io: Server
 
 // Select question handler
 export const handleSelectQuestion = (socket: Socket, data: SocketData, io: Server) => {
-  socket.on('selectQuestion', (questionId: string) => {
+  socket.on('selectQuestion', async (questionId: string) => {
     const user = data.users.get(socket.id);
     if (user && user.isAdmin) {
-      const question = data.questions.find(q => q.id === questionId);
-      if (question) {
-        data.currentGame.question = question;
+      const questionSetService = new QuestionSetService();
+      const questionSet = await questionSetService.getQuestionSet('6818f618e44cc58cccc01c27');
+      const question = questionSet?.questions.find(q => q._id.toString() === questionId);
+      if (questionSet && question) {
+        data.currentGame.question = {
+          id: question._id.toString(),
+          text: question.text
+        };
         data.currentGame.buzzedPlayer = null;
 
         // Notify all clients about new question
@@ -207,9 +202,8 @@ export const handleSelectQuestion = (socket: Socket, data: SocketData, io: Serve
           const playerSocket = io.sockets.sockets.get(playerId);
           if (playerSocket) {
             playerSocket.emit('questionSelected', {
-              currentGame: data.currentGame,
-              isPlaying: true,
-              inQueue: false
+              question: question.text,
+              round: ++data.currentGame.round
             });
           }
         });
@@ -227,7 +221,7 @@ export const handleSelectQuestion = (socket: Socket, data: SocketData, io: Serve
         });
 
         gameLogger.info('Question selected', {
-          questionId: question.id,
+          questionId,
           questionText: question.text
         });
       }
@@ -431,13 +425,18 @@ export const handleDisconnect = (socket: Socket, data: SocketData, io: Server) =
 
 // Get state handler
 export const handleGetState = (socket: Socket, data: SocketData, io: Server) => {
-  socket.on('getState', () => {
+  socket.on('getState', async () => {
     const user = data.users.get(socket.id);
     if (user && user.isAdmin) {
       wsLogger.info('Admin requested game state', {
         adminId: socket.id,
         adminName: user.name
       });
+
+      const questionSetService = new QuestionSetService();
+      const questionSet = await questionSetService.getQuestionSet('6818f618e44cc58cccc01c27');
+      const questions = questionSet?.questions;
+      data.questions = questions || [];
 
       // Send complete state to admin
       socket.emit('fullState', {
