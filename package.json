@@ -4,19 +4,30 @@
     "description": "Real-time quiz faceoff application",
     "main": "server.js",
     "scripts": {
-      "start": "node server.js",
-      "dev": "nodemon server.js"
+        "dev": "bun --watch run src/server.ts",
+        "start": "bun run src/server.ts",
+        "build": "bun build src/server.ts --outdir dist --minify --target node",
+        "test": "bun test",
+        "test:watch": "bun test --watch",
+        "type-check": "tsc --noEmit",
+        "lint": "eslint . --fix",
+        "format": "prettier --write .",
+        "postinstall": "bun install"
     },
     "engines": {
-      "node": ">=14.0.0"
+        "node": ">=14.0.0"
     },
     "dependencies": {
-      "express": "^4.17.3",
-      "socket.io": "^4.5.1",
-      "dotenv": "^16.0.0",
-      "uuid": "^8.3.2"
+        "dotenv": "^16.0.0",
+        "express": "^4.17.3",
+        "socket.io": "^4.5.1",
+        "uuid": "^8.3.2"
     },
     "devDependencies": {
-      "nodemon": "^2.0.15"
+        "@types/express": "^5.0.1",
+        "@types/node": "^22.15.3",
+        "@types/socket.io": "^3.0.2",
+        "@types/uuid": "^10.0.0",
+        "nodemon": "^2.0.15"
     }
-  }
+}
