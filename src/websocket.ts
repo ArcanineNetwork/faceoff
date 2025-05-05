@@ -9,7 +9,9 @@ import {
   handleSelectQuestion,
   handleBuzzIn,
   handleReplacePlayer,
-  handleDisconnect
+  handleDisconnect,
+  handleSelectWinner,
+  handleGetState
 } from './websocket/events';
 
 // Type for the socket data structure
@@ -31,5 +33,7 @@ export const handleWebSocket = (socket: Socket, data: SocketData, io: Server) =>
   handleSelectQuestion(socket, data, io);
   handleBuzzIn(socket, data, io);
   handleReplacePlayer(socket, data, io);
+  handleSelectWinner(socket, data, io);
   handleDisconnect(socket, data, io);
+  handleGetState(socket, data, io);
 };
